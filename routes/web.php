@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ItemController;
 
 Route::get('/login', function () {
     return view('login');
@@ -23,4 +24,14 @@ Route::get('/register', function () {
 Route::get('/', function () {
     return view('home');
 })->middleware('auth')->name('home');
+
+Route::get('/add_item', function () {
+    return view('add_item');
+});
+
+//Route::post('/items', [ItemController::class, 'store'])->name('items.store');
+
+Route::get('/items', function () {
+    return view('items');
+});
 

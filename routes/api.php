@@ -4,8 +4,8 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\ItemController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -32,4 +32,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::post('/register', [UserController::class, 'store'])->name('user.store');
     Route::post('/deactivate', [AuthController::class, 'deactivateUser'])->middleware('auth:sanctum');
 
-    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::get('/items', [ItemController::class, 'index']);
+        Route::post('/items', [ItemController::class, 'store']);
+        Route::put('/items/{item}', [ItemController::class, 'update']);
+        Route::delete('/items/{item}', [ItemController::class, 'destroy']);
+    });
+
