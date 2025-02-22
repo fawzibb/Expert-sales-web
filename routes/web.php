@@ -35,3 +35,7 @@ Route::get('/items', function () {
     return view('items');
 });
 
+Route::get('/orders', function () {
+    return view('orders');
+});
+

@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ItemController;
-
+use App\Http\Controllers\OrderController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +38,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::put('/items/{item}', [ItemController::class, 'update']);
         Route::delete('/items/{item}', [ItemController::class, 'destroy']);
     });
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::get('/orders', [OrderController::class, 'index']);  // عرض جميع الطلبات
+        Route::get('/orders/{order}', [OrderController::class, 'show']);  // عرض طلب معين
+        Route::post('/orders', [OrderController::class, 'store']);  // إضافة طلب جديد
+        Route::put('/orders/{order}', [OrderController::class, 'update']);  // تعديل طلب
+        Route::delete('/orders/{order}', [OrderController::class, 'destroy']);  // حذف طلب
+    });
+    Route::middleware('auth:sanctum')->get('/orders', [OrderController::class, 'index']);
+
 
