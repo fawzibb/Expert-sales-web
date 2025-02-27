@@ -33,7 +33,6 @@ class UserController extends Controller
 
         $validatedData['password'] = bcrypt($validatedData['password']); // Hash password
 
-        // إذا لم يتم إرسال active_to، تعيينه إلى 7 أيام بعد التاريخ الحالي
         if (!isset($validatedData['active_to'])) {
             $validatedData['active_to'] = Carbon::now()->addDays(7)->format('Y-m-d'); // 7 أيام من الآن
         } else {
@@ -89,5 +88,5 @@ class UserController extends Controller
     }
 
 
-    
+
 }

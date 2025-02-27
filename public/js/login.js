@@ -13,8 +13,10 @@ document.getElementById("login-form").addEventListener("submit", function(event)
     })
     .then(response => response.json())
     .then(data => {
+
         if (data.token) {
-            // Check if the user is active and their active_to date
+
+
             if (data.active && data.active_to) {
                 let activeToDate = new Date(data.active_to);
                 let today = new Date();
@@ -42,7 +44,7 @@ document.getElementById("login-form").addEventListener("submit", function(event)
                 alert("Your account is inactive. Please contact support.");
             }
         } else {
-            alert("Your account is inactive. Please contact support.");
+            alert(data.message);
         }
     })
     .catch(error => {

@@ -9,20 +9,19 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
-    // عرض جميع الطلبات الخاصة بالمستخدم
     public function index(Request $request)
 {
     $orders = Order::with('items')->where('user_id', $request->user()->id)->get()->map(function ($order) {
         return [
             'id' => $order->id,
             'name' => $order->name,
-            'total_price' => $order->total_price, // ستتم إضافة إجمالي السعر عبر accessor
-            'total_quantity' => $order->total_quantity, // ستتم إضافة إجمالي الكمية عبر accessor
+            'total_price' => $order->total_price,
+            'total_quantity' => $order->total_quantity,
             'items' => $order->items->map(function ($item) {
                 return [
                     'name' => $item->name,
-                    'price' => $item->pivot->price, // السعر من جدول الارتباط
-                    'quantity' => $item->pivot->quantity, // الكمية من جدول الارتباط
+                    'price' => $item->pivot->price,
+                    'quantity' => $item->pivot->quantity,
                 ];
             })
         ];
@@ -31,7 +30,6 @@ class OrderController extends Controller
         return response()->json($orders);
     }
 
-    // عرض طلب معين
     public function show($id)
     {
         $order = Order::with('items')->find($id);
@@ -41,7 +39,6 @@ class OrderController extends Controller
         return response()->json($order);
     }
 
-    // إضافة طلب جديد
     public function store(Request $request)
 {
     $request->validate([
@@ -60,7 +57,6 @@ class OrderController extends Controller
         'description' => $request->description,
     ]);
 
-    // إدراج العناصر في الطلب
     $orderItems = [];
     foreach ($request->items as $itemData) {
         $item = Item::find($itemData['id']);
@@ -75,13 +71,11 @@ class OrderController extends Controller
         }
     }
 
-    // إدراج العناصر في جدول الرابط
     DB::table('item_order')->insert($orderItems);
 
     return response()->json($order->load('items'), 201);
 }
 
-    // تحديث طلب معين
     public function update(Request $request, Order $order)
     {
         $request->validate([
@@ -93,7 +87,6 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1'
         ]);
 
-        // تحديث بيانات الطلب
         $order->update($request->only(['name', 'price', 'description']));
 
         if ($request->has('items')) {
@@ -117,7 +110,6 @@ class OrderController extends Controller
         return response()->json($order->load('items'));
     }
 
-    // حذف طلب
     public function destroy(Order $order)
     {
         $order->delete();

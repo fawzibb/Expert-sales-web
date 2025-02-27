@@ -25,9 +25,10 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
             'price' => 'required|numeric',
             'description' => 'nullable|string',
+            'stock' => 'nullable|integer',
         ]);
 
         $item = Auth::user()->items()->create($request->all());
@@ -44,12 +45,15 @@ class ItemController extends Controller
         }
 
         $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
+            'name' => 'nullable|string',
+            'price' => 'nullable|numeric',
             'description' => 'nullable|string',
+            'stock' => 'nullable|integer',
         ]);
 
         $item->update($request->all());
+        $item->stock = $request->stock;
+        $item->save();
         return response()->json($item);
     }
 

@@ -14,6 +14,7 @@ class Item extends Model
         'name',
         'price',
         'description',
+        'stock',
     ];
 
     /**
@@ -29,4 +30,5 @@ class Item extends Model
         return $this->belongsToMany(Order::class, 'item_order', 'item_id', 'order_id')
                     ->withPivot('quantity', 'price');
     }
+
 }
