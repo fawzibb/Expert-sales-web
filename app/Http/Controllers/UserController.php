@@ -34,7 +34,7 @@ class UserController extends Controller
         $validatedData['password'] = bcrypt($validatedData['password']); // Hash password
 
         if (!isset($validatedData['active_to'])) {
-            $validatedData['active_to'] = Carbon::now()->addDays(7)->format('Y-m-d'); // 7 أيام من الآن
+            $validatedData['active_to'] = Carbon::now()->addDays(14)->format('Y-m-d'); // 7 أيام من الآن
         } else {
             $validatedData['active_to'] = Carbon::parse($validatedData['active_to'])->format('Y-m-d');
         }
