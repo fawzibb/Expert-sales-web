@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    fetch("http://127.0.0.1:8000/api/user", {
+    fetch("api/user", {
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(error => console.error("Error fetching user:", error));
 
-    fetch("http://127.0.0.1:8000/api/items", {
+    fetch("api/items", {
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,
@@ -58,7 +58,7 @@ function updateItem(itemId) {
     let price = document.getElementById(`price-${itemId}`).value;
     let description = document.getElementById(`description-${itemId}`).value;
 
-    fetch(`http://127.0.0.1:8000/api/items/${itemId}`, {
+    fetch(`api/items/${itemId}`, {
         method: "PUT",
         headers: {
             "Authorization": "Bearer " + token,
@@ -76,7 +76,7 @@ function updateItem(itemId) {
 function deleteItem(itemId) {
     let token = localStorage.getItem("auth_token");
 
-    fetch(`http://127.0.0.1:8000/api/items/${itemId}`, {
+    fetch(`api/items/${itemId}`, {
         method: "DELETE",
         headers: {
             "Authorization": "Bearer " + token,

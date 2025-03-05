@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    fetch("api/user", {
+    fetch("http://127.0.0.1:8000/api/user", {
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
         document.getElementById("active-days").innerText = daysRemaining > 0 ? daysRemaining + " days remaining" : "Subscription expired";
 
-        fetch("api/items", {
+        fetch("http://127.0.0.1:8000/api/items", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token,
@@ -66,17 +66,17 @@ let totalPrice = 0;
 function addToCart(name, price, id) {
     let itemFound = false;
 
-
+    // Check if item is already in the cart
     for (let item of cartItems) {
         if (item.id === id) {
-            item.quantity += 1; 
-            totalPrice += price;
+            item.quantity += 1; // Increase quantity
+            totalPrice += price; // Update total price
             itemFound = true;
             break;
         }
     }
 
-
+    // If item is not found, add to cart
     if (!itemFound) {
         cartItems.push({ name, price, id, quantity: 1 });
         totalPrice += price;
@@ -92,13 +92,13 @@ function updateCart() {
 
     cartItems.forEach(item => {
         let li = document.createElement("li");
-        li.innerText = `${item.name} - $${item.price.toFixed(2)} x ${item.quantity}`;
+        li.innerText = `${item.name} - $${item.price.toFixed(2)} x ${item.quantity}`; // Show quantity
         cartList.appendChild(li);
     });
 
     totalElement.innerText = `Total: $${totalPrice.toFixed(2)}`;
 
-
+    // Auto scroll to bottom
     document.getElementById('cart').scrollTop = document.getElementById('cart').scrollHeight;
 }
 
@@ -125,11 +125,10 @@ document.getElementById("cash-btn").addEventListener("click", function () {
         name: "My Order",
         price: totalPrice,
         description: "Order with multiple items",
-        items: itemQuantities,
-        created_at : Date.now()
+        items: itemQuantities
     };
 
-    fetch("api/orders", {
+    fetch("http://127.0.0.1:8000/api/orders", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + token,
@@ -164,7 +163,7 @@ function toggleEditMode() {
 function deleteItem(itemId) {
     let token = localStorage.getItem("auth_token");
 
-    fetch(`api/items/${itemId}`, {
+    fetch(`http://127.0.0.1:8000/api/items/${itemId}`, {
         method: "DELETE",
         headers: {
             "Authorization": "Bearer " + token,

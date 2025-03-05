@@ -11,7 +11,7 @@
     <div class="header">
         <div class="user-info">
             <div class="user-name" id="user-name"></div>
-            
+
         </div>
         <div class="active-days" id="active-days"></div>
         <div class="logout" id="logout-btn">
@@ -28,7 +28,7 @@
                     <th>Items</th>
                     <th>Total Price</th>
                     <th>Date</th>
-                    <th>Status</th>
+                    
                 </tr>
             </thead>
             <tbody>

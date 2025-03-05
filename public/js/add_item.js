@@ -14,7 +14,7 @@ document.getElementById("add-item-form").addEventListener("submit", function(eve
 
 
 
-    fetch("http://127.0.0.1:8000/api/items", {
+    fetch("api/items", {
         method: "POST",
         headers: {
             "Authorization": "Bearer " + token,
@@ -24,14 +24,18 @@ document.getElementById("add-item-form").addEventListener("submit", function(eve
             name: name,
             price: price,
             description: description
+
         })
+
     })
+
     .then(response => response.json())
     .then(data => {
         alert("Item added successfully!");
         window.location.href = "/home";
     })
     .catch(error => {
+        
         console.error("Error adding item:", error);
         alert("Failed to add item.");
     });

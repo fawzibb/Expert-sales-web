@@ -16,7 +16,7 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if ($user->active_to && Carbon::parse($user->active_to)->isPast()) {
-                $user->update(['active' => 0]); // تعطيل المستخدم
+                $user->update(['active' => 0]); 
                 Auth::logout();
                 return response()->json(['message' => 'Your account has expired. Please contact support.'], 403);
             }

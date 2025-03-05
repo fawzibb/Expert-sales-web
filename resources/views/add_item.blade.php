@@ -65,7 +65,7 @@
             let price = document.getElementById("price").value;
             let description = document.getElementById("description").value;
 
-            fetch("http://127.0.0.1:8000/api/items", {
+            fetch("/api/items", {
                 method: "POST",
                 headers: {
                     "Authorization": "Bearer " + token,

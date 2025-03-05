@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    fetch("http://127.0.0.1:8000/api/user", {
+    fetch("api/user", {
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("active-days").innerText = daysRemaining > 0 ? daysRemaining + " days remaining" : "Subscription expired";
 
         // Fetching orders data
-        fetch("http://127.0.0.1:8000/api/orders", {
+        fetch("api/orders", {
             method: "GET",
             headers: {
                 "Authorization": "Bearer " + token,
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${itemsNames}</td>
                     <td>$${totalPrice}</td>
                     <td>${new Date(order.created_at).toLocaleString()}</td>
-                    <td>${order.status}</td>
+
                 `;
                 tableBody.appendChild(row);
             });

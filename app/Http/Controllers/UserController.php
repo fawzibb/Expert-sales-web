@@ -14,13 +14,13 @@ class UserController extends Controller
         return response()->json(User::all());
     }
 
-    // Get a single user by ID
+
     public function show($id)
     {
         return response()->json(User::findOrFail($id));
     }
 
-    // Store a new user
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -31,16 +31,15 @@ class UserController extends Controller
             'active_to' => 'date|nullable',
         ]);
 
-        $validatedData['password'] = bcrypt($validatedData['password']); // Hash password
+        $validatedData['password'] = bcrypt($validatedData['password']);
 
         if (!isset($validatedData['active_to'])) {
-            $validatedData['active_to'] = Carbon::now()->addDays(14)->format('Y-m-d'); // 7 أيام من الآن
+            $validatedData['active_to'] = Carbon::now()->addDays(14)->format('Y-m-d');
         } else {
             $validatedData['active_to'] = Carbon::parse($validatedData['active_to'])->format('Y-m-d');
         }
 
-        // إضافة dd() لمراجعة التاريخ الذي يتم حسابه
-       // dd($validatedData['active_to']); // هذا سيساعدك على التحقق من التاريخ الذي يتم حسابه
+
 
         $user = User::create($validatedData);
 
@@ -48,7 +47,7 @@ class UserController extends Controller
     }
 
 
-    // Update an existing user
+
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
@@ -65,13 +64,7 @@ class UserController extends Controller
             $validatedData['password'] = bcrypt($validatedData['password']);
         }
 
-        // إذا تم إرسال active_to، نقوم بتحويله للتنسيق المطلوب
-        if (isset($validatedData['active_to'])) {
-            $validatedData['active_to'] = Carbon::parse($validatedData['active_to'])->format('Y-m-d');
-        } else {
-            // إذا لم يتم إدخال قيمة لـ active_to، نقوم بتعيينه 7 أيام من الآن
-            $validatedData['active_to'] = Carbon::now()->addDays(7)->format('Y-m-d');
-        }
+        
 
         $user->update($validatedData);
 

@@ -17,6 +17,7 @@ class OrderController extends Controller
             'name' => $order->name,
             'total_price' => $order->total_price,
             'total_quantity' => $order->total_quantity,
+            'created_at' => $order->created_at,
             'items' => $order->items->map(function ($item) {
                 return [
                     'name' => $item->name,
@@ -50,7 +51,7 @@ class OrderController extends Controller
         'items.*.quantity' => 'required|integer|min:1'
     ]);
 
-    // إنشاء الطلب
+
     $order = $request->user()->orders()->create([
         'name' => $request->name,
         'price' => $request->price,
@@ -115,4 +116,20 @@ class OrderController extends Controller
         $order->delete();
         return response()->json(null, 204);
     }
+
+    public function getOrders(Request $request)
+{
+    $user = auth()->user();
+    $query = $user->orders()->with('items');
+
+    if ($request->has('start_date') && $request->has('end_date')) {
+        $startDate = $request->start_date . ' 00:00:00';
+        $endDate = $request->end_date . ' 23:59:59';
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+    }
+
+    $orders = $query->get();
+    return response()->json($orders);
+}
+
 }

@@ -10,17 +10,23 @@
 <body>
     <div class="header">
         <div class="user-info">
+            <button class="menu-toggle" id="menu-toggle"><i class="fas fa-bars"></i></button>
             <div class="user-name" id="user-name"></div>
-            <button class="add-item" onclick="window.location.href='/add_item'">+ Add Item</button>
-            <button class="inventory" onclick="window.location.href='/inventory'">Inventory</button>
-            <button class="orders" onclick="window.location.href='/orders'">Orders</button>
-            <button class="edit-items" onclick="toggleEditMode()">Edit Items</button>
-            <button class="items" onclick="window.location.href='/items'">Items</button>
+
         </div>
         <div class="active-days" id="active-days"></div>
-        <div class="logout" id="logout-btn">
-            <i class="fas fa-sign-out-alt"></i>
-        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div style="height: 60px"></div>
+
+        <button class="add-item" onclick="window.location.href='/add_item'">+ Add Item</button>
+        <button class="inventory" onclick="window.location.href='/inventory'">Inventory</button>
+        <button class="orders" onclick="window.location.href='/orders'">Orders</button>
+        <button class="edit-items" onclick="toggleEditMode()">delete item</button>
+        <button class="items" onclick="window.location.href='/items'">Items</button>
+        <button class="logout" id="logout-btn">Logout</button>
     </div>
 
     <div class="container" id="items-container">
@@ -38,6 +44,11 @@
     </div>
 
     <script src="{{ asset('js/home.js') }}"></script>
-
+    <script>
+        // Toggle sidebar menu on button click
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
 </body>
 </html>
