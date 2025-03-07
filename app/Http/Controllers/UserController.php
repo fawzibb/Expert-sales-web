@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function index()
+    public function show_users()
     {
         return response()->json(User::all());
     }
@@ -21,7 +21,7 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function register(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
@@ -46,6 +46,49 @@ class UserController extends Controller
         return response()->json($user, 201);
     }
 
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if ($user->active_to && Carbon::parse($user->active_to)->isPast()) {
+                $user->update(['active' => 0]);
+                Auth::logout();
+                return response()->json(['message' => 'Your account has expired. Please contact support.'], 403);
+            }
+
+            if (!$user->active) {
+                return response()->json(['message' => 'Your account is inactive.'], 403);
+            }
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+            $user->update(['remember_token' => $token]);
+            return response()->json([
+                'token' => $token,
+                'active' => $user->active,
+                'active_to' => $user->active_to,
+                'message' => 'Login successful'
+            ]);
+        }
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user) {
+            $user->tokens()->delete();
+            auth()->logout();
+            return response()->json(['message' => 'Logged out successfully'], 200);
+        } else {
+            return response()->json(['message' => 'No user logged in'], 401);
+        }
+    }
+
 
 
     public function update(Request $request, $id)
@@ -64,14 +107,14 @@ class UserController extends Controller
             $validatedData['password'] = bcrypt($validatedData['password']);
         }
 
-        
+
 
         $user->update($validatedData);
 
         return response()->json($user);
     }
 
-    // Delete a user
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);

@@ -66,16 +66,14 @@ let totalPrice = 0;
 function addToCart(name, price, id) {
     let itemFound = false;
 
-
     for (let item of cartItems) {
         if (item.id === id) {
-            item.quantity += 1; 
+            item.quantity += 1;
             totalPrice += price;
             itemFound = true;
             break;
         }
     }
-
 
     if (!itemFound) {
         cartItems.push({ name, price, id, quantity: 1 });
@@ -97,8 +95,6 @@ function updateCart() {
     });
 
     totalElement.innerText = `Total: $${totalPrice.toFixed(2)}`;
-
-
     document.getElementById('cart').scrollTop = document.getElementById('cart').scrollHeight;
 }
 
@@ -116,17 +112,16 @@ document.getElementById("cash-btn").addEventListener("click", function () {
 
     let token = localStorage.getItem("auth_token");
 
-    let itemQuantities = [];
-    cartItems.forEach(item => {
-        itemQuantities.push({ id: item.id, quantity: item.quantity });
-    });
+    let itemQuantities = cartItems.map(item => ({
+        id: item.id,
+        quantity: item.quantity
+    }));
 
     let orderData = {
         name: "My Order",
-        price: totalPrice,
         description: "Order with multiple items",
         items: itemQuantities,
-        created_at : Date.now()
+        created_at: Date.now()
     };
 
     fetch("api/orders", {
@@ -137,15 +132,15 @@ document.getElementById("cash-btn").addEventListener("click", function () {
         },
         body: JSON.stringify(orderData)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data) {
+    .then(response => response.json().then(data => ({ status: response.status, body: data })))
+    .then(result => {
+        if (result.status === 201) {
             alert("Order placed successfully!");
             cartItems = [];
             totalPrice = 0;
             updateCart();
         } else {
-            alert("Error placing order.");
+            alert(result.body.message || "Error placing order.");
         }
     })
     .catch(error => {
@@ -156,6 +151,7 @@ document.getElementById("cash-btn").addEventListener("click", function () {
 
 function toggleEditMode() {
     let items = document.querySelectorAll(".item");
+    document.getElementById('sidebar').classList.toggle('show');
     items.forEach(item => {
         item.classList.toggle("edit-mode");
     });
@@ -180,4 +176,10 @@ function deleteItem(itemId) {
         }
     })
     .catch(error => console.error("Error deleting item:", error));
+
+
 }
+
+document.getElementById('menu-toggle').addEventListener('click', function() {
+    document.getElementById('sidebar').classList.toggle('show');
+});

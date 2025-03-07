@@ -52,7 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // Calculate the total price
                 let totalPrice = order.items.reduce((total, item) => total + parseFloat(item.price) * item.quantity, 0).toFixed(2);
-
+                if (parseFloat(totalPrice) === 0) {
+                    return; // Skip this iteration and don't append the row
+                }
                 let row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${order.id}</td>

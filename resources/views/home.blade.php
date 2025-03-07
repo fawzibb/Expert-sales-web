@@ -31,6 +31,7 @@
 
     <div class="container" id="items-container">
         <!-- Items will be dynamically added here -->
+
     </div>
 
     <div class="cart" id="cart">
@@ -44,11 +45,5 @@
     </div>
 
     <script src="{{ asset('js/home.js') }}"></script>
-    <script>
-        // Toggle sidebar menu on button click
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            document.getElementById('sidebar').classList.toggle('show');
-        });
-    </script>
 </body>
 </html>

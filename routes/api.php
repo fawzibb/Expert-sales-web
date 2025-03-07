@@ -23,15 +23,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 
 });
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users', [UserController::class, 'show_users'])->name('users.index');
     Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
-    Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::post('/register', [UserController::class, 'store'])->name('user.store');
-    Route::post('/deactivate', [AuthController::class, 'deactivateUser'])->middleware('auth:sanctum');
+    Route::post('/login', [UserController::class, 'login']);
+    Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+    Route::post('/register', [UserController::class, 'register'])->name('user.store');
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/items', [ItemController::class, 'index']);
@@ -49,7 +47,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::post('/orders', [OrderController::class, 'store']);
         Route::put('/orders/{order}', [OrderController::class, 'update']);
         Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
-        
+
     });
     Route::middleware('auth:sanctum')->get('/orders', [OrderController::class, 'index']);
 

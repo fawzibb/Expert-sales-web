@@ -9,10 +9,10 @@ class Order extends Model
 {
     use HasFactory;
 
-    // تحديد اسم الجدول في قاعدة البيانات (اختياري إذا كان اسم الجدول يتبع القواعد القياسية)
+    
     protected $table = 'orders';
 
-    // تحديد الأعمدة التي يمكن ملؤها (mass assignable)
+
     protected $fillable = [
         'user_id',
         'name',
@@ -20,20 +20,20 @@ class Order extends Model
         'description'
     ];
 
-    // العلاقة مع موديل User (كل Order ينتمي إلى User واحد)
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // العلاقة مع موديل Item (Order يمكن أن يحتوي على العديد من الـ Items)
+
     public function items()
     {
         return $this->belongsToMany(Item::class, 'item_order', 'order_id', 'item_id')
-                    ->withPivot('quantity', 'price'); // إحضار الكمية والسعر من جدول الرابط
+                    ->withPivot('quantity', 'price');
     }
 
-    // حساب إجمالي السعر للطلب بناءً على العناصر المرتبطة
+
     public function getTotalPriceAttribute()
     {
         return $this->items->sum(function ($item) {
@@ -41,7 +41,7 @@ class Order extends Model
         });
     }
 
-    // حساب إجمالي الكمية للطلب
+
     public function getTotalQuantityAttribute()
     {
         return $this->items->sum('pivot.quantity');

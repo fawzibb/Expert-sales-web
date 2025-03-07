@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'active',
         'active_to',
+        'remember_token',
     ];
 
     /**

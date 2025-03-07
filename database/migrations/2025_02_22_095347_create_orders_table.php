@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // connect order with user
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
             $table->string('name');
-            $table->decimal('price', 10, 2);  // totale price
-            $table->text('description')->nullable();  // لتخزين الوصف
+            $table->decimal('price', 10, 2);
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

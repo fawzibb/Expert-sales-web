@@ -44,37 +44,56 @@ class OrderController extends Controller
 {
     $request->validate([
         'name' => 'required|string|max:255',
-        'price' => 'required|numeric',
         'description' => 'nullable|string',
         'items' => 'required|array',
         'items.*.id' => 'exists:items,id',
         'items.*.quantity' => 'required|integer|min:1'
     ]);
 
+    $totalPrice = 0;
+    $orderItems = [];
 
+    foreach ($request->items as $itemData) {
+        $item = Item::find($itemData['id']);
+
+        // التحقق من الكمية في المخزون
+        if ($item->stock <= 0) {
+            return response()->json(['message' => 'Out of Stock for item: ' . $item->name], 400);
+        } elseif ($item->stock < $itemData['quantity']) {
+            return response()->json(['message' => 'Not enough stock for item: ' . $item->name], 400);
+        }
+
+        // تحديث المخزون بعد الخصم
+        $item->stock -= $itemData['quantity'];
+        $item->save();
+
+        // حساب السعر الإجمالي
+        $totalPrice += $item->price * $itemData['quantity'];
+
+        // تجهيز بيانات الطلب
+        $orderItems[] = [
+            'item_id' => $item->id,
+            'price' => $item->price,  // السعر يتم جلبه مباشرة من العنصر
+            'quantity' => $itemData['quantity'],
+            'created_at' => now(),
+            'updated_at' => now()
+        ];
+    }
+
+    // إنشاء الطلب بعد التأكد من وجود الكمية الكافية
     $order = $request->user()->orders()->create([
         'name' => $request->name,
-        'price' => $request->price,
+        'price' => $totalPrice,  // استخدام السعر الإجمالي
         'description' => $request->description,
     ]);
 
-    $orderItems = [];
-    foreach ($request->items as $itemData) {
-        $item = Item::find($itemData['id']);
-        for ($i = 0; $i < $itemData['quantity']; $i++) {
-            $orderItems[] = [
-                'order_id' => $order->id,
-                'item_id' => $item->id,
-                'price' => $item->price,
-                'created_at' => now(),
-                'updated_at' => now()
-            ];
-        }
+    // ربط الطلب بالعناصر
+    foreach ($orderItems as &$orderItem) {
+        $orderItem['order_id'] = $order->id;
     }
-
     DB::table('item_order')->insert($orderItems);
 
-    return response()->json($order->load('items'), 201);
+    return response()->json(['message' => 'Successful', 'order' => $order->load('items')], 201);
 }
 
     public function update(Request $request, Order $order)
