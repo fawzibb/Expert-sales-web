@@ -70,7 +70,7 @@ class UserController extends Controller
                 'active' => $user->active,
                 'active_to' => $user->active_to,
                 'message' => 'Login successful'
-            ]);
+            ],200);
         }
 
         return response()->json(['message' => 'Invalid credentials'], 401);

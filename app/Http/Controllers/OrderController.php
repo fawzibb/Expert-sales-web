@@ -56,38 +56,38 @@ class OrderController extends Controller
     foreach ($request->items as $itemData) {
         $item = Item::find($itemData['id']);
 
-        // التحقق من الكمية في المخزون
+
         if ($item->stock <= 0) {
-            return response()->json(['message' => 'Out of Stock for item: ' . $item->name], 400);
+            return response()->json(['message' => 'Out of Stock for item: ' . $item->name], 202);
         } elseif ($item->stock < $itemData['quantity']) {
-            return response()->json(['message' => 'Not enough stock for item: ' . $item->name], 400);
+            return response()->json(['message' => 'Not enough stock for item: ' . $item->name], 202);
         }
 
-        // تحديث المخزون بعد الخصم
+
         $item->stock -= $itemData['quantity'];
         $item->save();
 
-        // حساب السعر الإجمالي
+
         $totalPrice += $item->price * $itemData['quantity'];
 
-        // تجهيز بيانات الطلب
+
         $orderItems[] = [
             'item_id' => $item->id,
-            'price' => $item->price,  // السعر يتم جلبه مباشرة من العنصر
+            'price' => $item->price,
             'quantity' => $itemData['quantity'],
             'created_at' => now(),
             'updated_at' => now()
         ];
     }
 
-    // إنشاء الطلب بعد التأكد من وجود الكمية الكافية
+
     $order = $request->user()->orders()->create([
         'name' => $request->name,
-        'price' => $totalPrice,  // استخدام السعر الإجمالي
+        'price' => $totalPrice,
         'description' => $request->description,
     ]);
 
-    // ربط الطلب بالعناصر
+
     foreach ($orderItems as &$orderItem) {
         $orderItem['order_id'] = $order->id;
     }
@@ -138,7 +138,7 @@ class OrderController extends Controller
 
     public function getOrders(Request $request)
 {
-    $user = auth()->user();
+    $user = $request->user();
     $query = $user->orders()->with('items');
 
     if ($request->has('start_date') && $request->has('end_date')) {

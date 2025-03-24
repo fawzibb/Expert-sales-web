@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::put('/orders/{order}', [OrderController::class, 'update']);
         Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
 
+
     });
     Route::middleware('auth:sanctum')->get('/orders', [OrderController::class, 'index']);
 

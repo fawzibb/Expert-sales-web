@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    // Fetch user data to check if the account is active
     fetch("api/user", {
         method: "GET",
         headers: {
@@ -15,13 +16,26 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(response => response.json())
     .then(data => {
+        // Check if the user is active
+        if (data.active === 0) {
+            // If inactive, remove token and redirect to login
+            localStorage.removeItem("auth_token");
+            alert("Your account is inactive. Please log in again.");
+            window.location.href = "/login";
+            return;
+        }
+
+        // Display user name
         document.getElementById("user-name").innerText = data.name;
+
+        // Check subscription status
         let activeToDate = new Date(data.active_to);
         let currentDate = new Date();
         let timeDifference = activeToDate - currentDate;
         let daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
         document.getElementById("active-days").innerText = daysRemaining > 0 ? daysRemaining + " days remaining" : "Subscription expired";
 
+        // Fetch and display items
         fetch("api/items", {
             method: "GET",
             headers: {
@@ -55,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+// Logout functionality
 document.getElementById("logout-btn").addEventListener("click", function () {
     localStorage.removeItem("auth_token");
     window.location.href = "/login";
@@ -63,6 +78,7 @@ document.getElementById("logout-btn").addEventListener("click", function () {
 let cartItems = [];
 let totalPrice = 0;
 
+// Add items to the cart
 function addToCart(name, price, id) {
     let itemFound = false;
 
@@ -83,6 +99,7 @@ function addToCart(name, price, id) {
     updateCart();
 }
 
+// Update the cart display
 function updateCart() {
     let cartList = document.getElementById("cart-items");
     let totalElement = document.getElementById("total-price");
@@ -98,12 +115,14 @@ function updateCart() {
     document.getElementById('cart').scrollTop = document.getElementById('cart').scrollHeight;
 }
 
+// Clear the cart
 document.getElementById("clear-cart-btn").addEventListener("click", function () {
     cartItems = [];
     totalPrice = 0;
     updateCart();
 });
 
+// Place order and send to the server
 document.getElementById("cash-btn").addEventListener("click", function () {
     if (cartItems.length === 0) {
         alert("Your cart is empty.");
@@ -139,6 +158,7 @@ document.getElementById("cash-btn").addEventListener("click", function () {
             cartItems = [];
             totalPrice = 0;
             updateCart();
+            location.reload();
         } else {
             alert(result.body.message || "Error placing order.");
         }
@@ -149,6 +169,7 @@ document.getElementById("cash-btn").addEventListener("click", function () {
     });
 });
 
+// Toggle edit mode for items
 function toggleEditMode() {
     let items = document.querySelectorAll(".item");
     document.getElementById('sidebar').classList.toggle('show');
@@ -157,6 +178,7 @@ function toggleEditMode() {
     });
 }
 
+// Delete item from the list
 function deleteItem(itemId) {
     let token = localStorage.getItem("auth_token");
 
@@ -176,10 +198,9 @@ function deleteItem(itemId) {
         }
     })
     .catch(error => console.error("Error deleting item:", error));
-
-
 }
 
+// Toggle sidebar visibility
 document.getElementById('menu-toggle').addEventListener('click', function() {
     document.getElementById('sidebar').classList.toggle('show');
 });
