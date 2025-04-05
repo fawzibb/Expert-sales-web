@@ -42,7 +42,7 @@ class UserController extends Controller
 
 
         $user = User::create($validatedData);
-
+        $user->sendEmailVerificationNotification();
         return response()->json($user, 201);
     }
 
@@ -50,8 +50,10 @@ class UserController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
 
             if ($user->active_to && Carbon::parse($user->active_to)->isPast()) {
                 $user->update(['active' => 0]);
@@ -63,14 +65,22 @@ class UserController extends Controller
                 return response()->json(['message' => 'Your account is inactive.'], 403);
             }
 
+
+            if (!$user->hasVerifiedEmail()) {
+                return response()->json(['message' => 'Please verify your email.'], 403);
+                $user->sendEmailVerificationNotification();
+            }
+
+            
             $token = $user->createToken('auth_token')->plainTextToken;
             $user->update(['remember_token' => $token]);
+
             return response()->json([
                 'token' => $token,
                 'active' => $user->active,
                 'active_to' => $user->active_to,
                 'message' => 'Login successful'
-            ],200);
+            ], 200);
         }
 
         return response()->json(['message' => 'Invalid credentials'], 401);
