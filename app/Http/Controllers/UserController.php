@@ -67,11 +67,11 @@ class UserController extends Controller
 
 
             if (!$user->hasVerifiedEmail()) {
-                return response()->json(['message' => 'Please verify your email.'], 403);
                 $user->sendEmailVerificationNotification();
+                return response()->json(['message' => 'Please verify your email.'], 403);
             }
 
-            
+
             $token = $user->createToken('auth_token')->plainTextToken;
             $user->update(['remember_token' => $token]);
 

@@ -5,6 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Registration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Add CSS for the spinner */
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+            border-width: 0.25em;
+        }
+
+        .btn-register {
+            position: relative;
+        }
+
+        .spinner-container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
 </head>
 <body class="bg-light">
 
@@ -39,7 +59,14 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100"style="background: #28a745;">Register</button>
+                <button type="submit" class="btn btn-primary w-100 btn-register" style="background: #28a745;">
+                    Register
+                    <div class="spinner-container" id="spinner">
+                        <div class="spinner-border text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </button>
             </form>
 
             <p class="text-center mt-3">
@@ -52,6 +79,12 @@
     <script>
         document.getElementById('registrationForm').onsubmit = function(e) {
             e.preventDefault(); // Prevent default form submission
+
+            // Show the spinner and disable the button
+            var spinner = document.getElementById('spinner');
+            var button = document.querySelector('.btn-register');
+            spinner.style.display = 'block'; // Show spinner
+            button.disabled = true; // Disable button to prevent multiple submissions
 
             // Submit the form via AJAX
             fetch(this.action, {
@@ -71,7 +104,11 @@
                     alert("Registration failed. Please check your inputs.");
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                spinner.style.display = 'none'; // Hide spinner after the request completes
+                button.disabled = false; // Re-enable the button
+            });
         };
     </script>
 </body>
