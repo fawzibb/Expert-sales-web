@@ -68,6 +68,7 @@ class UserController extends Controller
 
             if (!$user->hasVerifiedEmail()) {
                 return response()->json(['message' => 'Please verify your email.'], 403);
+                $user->sendEmailVerificationNotification();
             }
 
 
