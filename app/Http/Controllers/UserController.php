@@ -39,11 +39,19 @@ class UserController extends Controller
             $validatedData['active_to'] = Carbon::parse($validatedData['active_to'])->format('Y-m-d');
         }
 
-
-
         $user = User::create($validatedData);
+
         $user->sendEmailVerificationNotification();
-        return response()->json($user, 201);
+
+
+        Auth::login($user);
+
+        $token = $user->createToken('auth_token')->accessToken;
+
+        return response()->json([
+            'user' => $user,
+            'token' => $token
+        ], 201);
     }
 
     public function login(Request $request)
